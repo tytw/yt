@@ -2,42 +2,10 @@
 <html lang="zh-tw">
 <head>
 <title>『彩虹』大合唱創作者索引</title>
-<style>
-body {
-	color:white;
-	background-color:black;
-    margin-left: 5vw;
-	margin-right: 5vw;
-	font-size: 2vw;
-	font-weight: bold;
-}
-
-.rwdtxt {
-	font-size: 2.25vw;
-	color:white;
-	background-color:black;
-}
-
-.video-container {
-	position: relative;
-	padding-bottom: 56.25%;
-	padding-top: 0px;
-	height: 0;
-	overflow: hidden;
-}
-
-.video-container iframe, .video-container object, .video-container embed {
-	position: absolute;
-	top: 0;left: 0;
-	width: 100%;
-	height: 100%;
-}
-</style>
+<style>body{color:white; background-color:black}</style>
 </head>
 <body onload="init()">
-<div id="playerDiv" class="video-container">
-<iframe id="player" frameborder="0" src="https://www.youtube.com/embed/iu10TkjDFxA?enablejsapi=1"></iframe>
-</div>
+<div id="player"></div>
 
 <script>
 var tag = document.createElement('script');
@@ -51,9 +19,12 @@ var enableSync;
 
 function onYouTubeIframeAPIReady() {
     player = new YT.Player('player', {
-        events: {
-          'onStateChange': onPlayerStateChange
-        }
+       height: '360',
+       width: '640',
+       videoId: 'iu10TkjDFxA',
+       events: {
+         'onStateChange': onPlayerStateChange
+       }
     });
 }
 
@@ -116,9 +87,8 @@ function updateSelectBox() {
 </script>
 
 <div>
-<select id="mySelect" onchange="onSeek()" size="2" class="rwdtxt"></select>
-<input type="checkbox" id="enableSync" checked onclick="updateSelectBox()">
-<label for="enableSync">自動捲動</label>
+<select id="mySelect" size="6" onchange="onSeek()"></select>
+<input type="checkbox" id="enableSync" checked onclick="updateSelectBox()"><label for="enableSync">自動捲動</label>
 <a href="https://www.youtube.com/watch?v=iu10TkjDFxA&lc=UgzrTBInFmAwLipjUSh4AaABAg">資料來源</a>
 </div>
 
