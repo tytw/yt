@@ -16,6 +16,14 @@ var player;
 var selectBox;
 var selectItems;
 var enableSync;
+var enableLoop;
+var songOnly;
+var timerNo;
+const TIMER_FREQ = 1000;
+const TIMER_AHEAD = 4;
+const TIMER_ERR = 100;
+const TIMER_ERR_S = TIMER_ERR / 1000;
+const SONG_LOOP_S = 295;
 
 function onYouTubeIframeAPIReady() {
     player = new YT.Player('player', {
@@ -34,6 +42,8 @@ function init() {
     selectBox = document.getElementById("mySelect");
     selectItems = [];
     enableSync = document.getElementById("enableSync");
+    enableLoop = document.getElementById("enableLoop");
+    songOnly = document.getElementById("songOnly");
 
     data.forEach(function (val, index) {
         if (val.length == 0) return;
@@ -53,42 +63,74 @@ function onSeek() {
 }
 
 var playing = false;
-var syncing = true;
 function onPlayerStateChange(event) {
     if (event.data == YT.PlayerState.PLAYING) {
         playing = true;
-        updateSelectBox();
+        setupSync();
     } else {
-        if (event.data == YT.PlayerState.ENDED) {
+        if (event.data == YT.PlayerState.ENDED && enableLoop.checked) {
             event.target.playVideo();
         }
         playing = false;
     }
 }
 
-function updateSelectBox() {
-    syncing = enableSync.checked;
-    if (!syncing) return;
+function setupSync() {
+    songOnly.disabled = !enableSync.checked;
+    if (!enableSync.checked) {
+        clearInterval(timerNo);
+        return;
+    }
+    syncSelectBox();
+
+    var s = player.getCurrentTime();
+    delay = TIMER_FREQ - TIMER_AHEAD - (s - Math.floor(s)) * 1000;
+    if (delay < TIMER_ERR) delay += TIMER_FREQ;
+    setTimeout(setupTimer, delay);
+}
+
+function setupTimer() {
+    clearInterval(timerNo);
+    timerNo = setInterval(syncSelectBox, TIMER_FREQ);
+}
+
+function syncSelectBox() {
+    if (!enableSync.checked) {
+        clearInterval(timerNo);
+        return;
+    }
 
     var s = player.getCurrentTime();
     for (var i=0; i<selectItems.length; ++i) {
         item = selectItems[i];
-        if (s + 0.5 < item.value) {
+        if (s + TIMER_ERR_S < item.value) {
             break;
         }
     }
-    selectBox.selectedIndex = i - 1;
+    if (selectBox.selectedIndex != i - 1) {
+        selectBox.selectedIndex = i - 1;
+    }
 
-    if (playing) {
-        setTimeout(updateSelectBox, 500);
+    if (s - TIMER_ERR_S > SONG_LOOP_S && songOnly.checked) {
+        if (enableLoop.checked) {
+            player.seekTo(0, true);
+        } else {
+            player.pauseVideo();
+        }
     }
 }
 </script>
 
 <div>
+<div style="float:left;">
 <select id="mySelect" size="6" onchange="onSeek()"></select>
-<input type="checkbox" id="enableSync" checked onclick="updateSelectBox()"><label for="enableSync">自動捲動</label>
+</div>
+<div style="float:left;">
+<input type="checkbox" id="enableSync" checked onclick="setupSync()"><label for="enableSync">自動捲動</label><br>
+<input type="checkbox" id="songOnly"></input><label for="songOnly">歌曲only</label><br>
+<input type="checkbox" id="enableLoop" checked><label for="enableLoop">重播</label><br>
 <a href="https://www.youtube.com/watch?v=iu10TkjDFxA&lc=UgzrTBInFmAwLipjUSh4AaABAg">資料來源</a>
+</div>
 </div>
 
 <textarea id="dataSrc" style="visibility:hidden;">
