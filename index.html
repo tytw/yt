@@ -20,8 +20,8 @@ var enableLoop;
 var songOnly;
 var timerNo;
 const TIMER_FREQ = 1000;
-const TIMER_AHEAD = 4;
-const TIMER_ERR = 100;
+const TIMER_AHEAD = 25;
+const TIMER_ERR = TIMER_FREQ / 2;
 const TIMER_ERR_S = TIMER_ERR / 1000;
 const SONG_LOOP_S = 295;
 
@@ -48,7 +48,7 @@ function init() {
     data.forEach(function (val, index) {
         if (val.length == 0) return;
         var t = val.split(" ", 1)[0].split(":");
-        var s = t[0]*60 + t[1]*1;
+        var s = t[0]*60 + parseInt(t[1]);
         var option = document.createElement("option");
         option.text = val;
         option.value = s;
@@ -134,7 +134,7 @@ function syncSelectBox() {
 </div>
 
 <textarea id="dataSrc" style="visibility:hidden;">
-0:00
+0:00 (intro)
 0:24 開水小姐 
 0:35 傅長膨AnimaJinx 
 0:47 黃氏兄弟(瑋瑋) 
@@ -170,15 +170,15 @@ function syncSelectBox() {
 3:40 梅伯 
 3:43 由左至右 老婆、旅行YJ、黑仔熊、拿鐵、柔伊
 3:45 由左至右 HOOK、關韶文、I'm多莉の軒兒、chu
-3:46 暫定
+3:46 [待補]
 3:48 由左至右 願願、梓凜、Leggy Reki 
 3:49 盧苑呈 
 3:50 グリーンマッスル綠肌肉
-3:51 暫定 
+3:51 [待補]
 3:52 超強系列 
 3:55 Ben&Dry(乾乾) 
 3:57 老王(LNG)、末羊子 dontkjoanne
-3:58 暫定
+3:58 [待補]
 3:59 由左至右 Gino勁宥、bitingman咬咬人、Mango Studio(Sherina曹萱)
 4:01 得得 
 4:02 K7凱琪 
@@ -193,7 +193,15 @@ function syncSelectBox() {
 4:24 江小M - SmallM ლ(⁰⊖⁰ლ)
 4:27 林進、KuoYuCheng郭郁承﻿
 4:46 (魚乾&瑋瑋)
-4:55 (結尾)
+4:55 (結尾) 黃氏兄弟
+5:42 (結尾) BB日記
+5:53 (結尾) 秀秀
+5:57 (結尾) 楊元慶 x 溜溜球
+6:02 (結尾) RICO
+6:04 (結尾) issytpc / 三十歲男子日常
+6:13 (結尾) Erica大耳
+6:17 (結尾) 胡子
+6:20 (end credit)
 </textarea>
 </body>
 </html>
