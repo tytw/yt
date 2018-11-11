@@ -37,8 +37,8 @@ function onYouTubeIframeAPIReady() {
 }
 
 function init() {
-    var dataSrc = document.getElementById("dataSrc").value;
-    var data = dataSrc.split(/\r\n|\n/);
+    var dataSrc = document.getElementById("dataSrc");
+    var data = dataSrc.value.split(/\r\n|\n/);
     selectBox = document.getElementById("mySelect");
     selectItems = [];
     enableSync = document.getElementById("enableSync");
@@ -62,23 +62,21 @@ function onSeek() {
     player.seekTo(s, true);
 }
 
-var playing = false;
 function onPlayerStateChange(event) {
     if (event.data == YT.PlayerState.PLAYING) {
-        playing = true;
-        setupSync();
+        startSync();
     } else {
+        stopSync();
         if (event.data == YT.PlayerState.ENDED && enableLoop.checked) {
             event.target.playVideo();
         }
-        playing = false;
     }
 }
 
-function setupSync() {
+function startSync() {
     songOnly.disabled = !enableSync.checked;
     if (!enableSync.checked) {
-        clearInterval(timerNo);
+        stopSync();
         return;
     }
     syncSelectBox();
@@ -89,14 +87,19 @@ function setupSync() {
     setTimeout(setupTimer, delay);
 }
 
+function stopSync() {
+    clearInterval(timerNo);
+}
+
 function setupTimer() {
     clearInterval(timerNo);
     timerNo = setInterval(syncSelectBox, TIMER_FREQ);
+    syncSelectBox();
 }
 
 function syncSelectBox() {
     if (!enableSync.checked) {
-        clearInterval(timerNo);
+        stopSync();
         return;
     }
 
